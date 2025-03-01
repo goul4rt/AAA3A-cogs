@@ -843,27 +843,11 @@ class TempRoles(Cog):
         if allowed_role_id not in [role.id for role in ctx.author.roles]:
             raise commands.UserFeedbackCheckFailure(_("Você não tem permissão para criar um cargo pessoal."))
 
-        await ctx.send(_("Caçando cargo pessoal..."))
-        # Verifica se o membro já possui um cargo pessoal
-        personal_roles = [role for role in ctx.author.roles if role.id == allowed_role_id]
-        await ctx.send(_("Cargo pessoal encontrado."))
-        # o cargo é?
-        
-        # Verifica se o usuário já possui um cargo pessoal
-        if personal_roles:
-            await ctx.send(_("Cargo pessoal encontrado."))
-            # enviar no cana qual o cargo encontrado 
-            await ctx.send(_("Cargo pessoal encontrado: {personal_roles[0].mention}.").format(personal_roles=personal_roles))
-            # pingar no cargo o cargo que ele já possui
-            # Salva a relação do ID do usuário com o cargo criado
-            user_personal_roles = await self.config.guild(ctx.guild).user_personal_roles()
-            user_id = str(ctx.author.id)
-            user_personal_roles[user_id] = allowed_role_id
-            await self.config.guild(ctx.guild).user_personal_roles.set(user_personal_roles)
+        # Verifica se o usuário já criou um cargo personalizado
+        created_personal_role = await self.config.guild(ctx.guild).personal_roles.get(str(ctx.author.id), None)
+        if created_personal_role:
+            raise commands.UserFeedbackCheckFailure(_("Você já criou um cargo personalizado anteriormente. Você não pode criar outro."))
 
-            raise commands.UserFeedbackCheckFailure(_("Você já possui um cargo pessoal."))
-
-        # Obtém a duração do cargo da pessoa
         duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(allowed_role_id))
         await ctx.send(_("Duração do cargo pessoal obtida com sucesso."))
 
@@ -895,6 +879,9 @@ class TempRoles(Cog):
                 reason="Permissões ajustadas para cargo pessoal."
             )
             await ctx.send(_("As permissões do cargo pessoal foram ajustadas com sucesso."))
+
+            # Armazena que o usuário criou um cargo personalizado
+            await self.config.guild(ctx.guild).personal_roles.set_raw(str(ctx.author.id), value=str(new_role.id))
         except discord.HTTPException as e:
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
