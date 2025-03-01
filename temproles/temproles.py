@@ -833,7 +833,7 @@ class TempRoles(Cog):
     ) -> None:
         """Criar um cargo pessoal que só você pode editar."""
         # Obtém o ID do cargo permitido da configuração
-        allowed_role_id = await self.config.guild(ctx.guild).allowed_personal_role_id()
+        allowed_role_id = 1179928669708369970
 
         if allowed_role_id is None:
             raise commands.UserFeedbackCheckFailure(
