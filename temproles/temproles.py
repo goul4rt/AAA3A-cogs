@@ -843,10 +843,8 @@ class TempRoles(Cog):
         if allowed_role_id not in [role.id for role in ctx.author.roles]:
             raise commands.UserFeedbackCheckFailure(_("Você não tem permissão para criar um cargo pessoal."))
 
-        # Verifica se o usuário já criou um cargo personalizado
-        created_personal_role = await self.config.guild(ctx.guild).personal_roles.get(str(ctx.author.id), None)
-        if created_personal_role:
-            raise commands.UserFeedbackCheckFailure(_("Você já criou um cargo personalizado anteriormente. Você não pode criar outro."))
+        duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(allowed_role_id))
+        await ctx.send(_("Duração do cargo pessoal obtida com sucesso."))
 
         # Cria o novo cargo
         guild = ctx.guild
@@ -864,6 +862,11 @@ class TempRoles(Cog):
             if position_role:
                 await new_role.edit(position=position_role.position - 1)
                 await ctx.send(_("A posição do cargo pessoal foi ajustada com sucesso."))
+
+            # Define a duração do novo cargo igual à do cargo da pessoa
+            if duration:
+                await self.config.guild(ctx.guild).auto_temp_roles.set({str(new_role.id): duration})
+                await ctx.send(_("A duração do cargo pessoal foi definida com sucesso."))
 
             # Define as permissões do cargo para que apenas o membro possa editá-lo
             await new_role.edit(
