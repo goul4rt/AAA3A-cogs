@@ -1,11 +1,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: VERSÃO DO PACOTE\n"
 "POT-Creation-Date: 2024-12-29 10:43+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: ANO-MÊS-DA HO:MI+ZONA\n"
+"Last-Translator: NOME COMPLETO <EMAIL@ENDEREÇO>\n"
+"Language-Team: LÍNGUA <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,83 +14,83 @@ msgstr ""
 #: honeypot\honeypot.py:21
 #, docstring
 msgid ""
-"Create a channel at the top of the server to attract self bots/scammers and "
-"notify/mute/kick/ban them immediately!"
+"Crie um canal no topo do servidor para atrair bots/escrotores e "
+"notificá-los/mutá-los/kická-los/baná-los imediatamente!"
 msgstr ""
 
 #: honeypot\honeypot.py:117
-msgid "Honeypot — Self Bot/Scammer Detected!"
+msgid "Honeypot — Bot/Scammer Detectado!"
 msgstr ""
 
 #: honeypot\honeypot.py:137
-msgid "**Failed:** The mute role is not set or doesn't exist anymore."
+msgid "**Falhou:** O papel de mutar não está definido ou não existe mais."
 msgstr ""
 
 #: honeypot\honeypot.py:148
 msgid ""
-"**Failed:** An error occurred while trying to take action against the "
-"member:\n"
+"**Falhou:** Ocorreu um erro ao tentar tomar uma ação contra o "
+"membro:\n"
 msgstr ""
 
 #: honeypot\honeypot.py:162
-msgid "Action:"
+msgid "Ação:"
 msgstr ""
 
 #: honeypot\honeypot.py:165
-msgid "The member has been muted."
+msgid "O membro foi mutado."
 msgstr ""
 
 #: honeypot\honeypot.py:168
-msgid "The member has been kicked."
+msgid "O membro foi kickado."
 msgstr ""
 
 #: honeypot\honeypot.py:170
-msgid "The member has been banned."
+msgid "O membro foi banido."
 msgstr ""
 
 #: honeypot\honeypot.py:199
 #, docstring
-msgid "Create the honeypot channel."
+msgid "Crie o canal honeypot."
 msgstr ""
 
 #: honeypot\honeypot.py:206
 msgid ""
-"The honeypot channel already exists: {honeypot_channel.mention} "
+"O canal honeypot já existe: {honeypot_channel.mention} "
 "({honeypot_channel.id})."
 msgstr ""
 
 #: honeypot\honeypot.py:228
-msgid "⚠️ DO NOT POST HERE! ⚠️"
+msgid "⚠️ NÃO POSTE AQUI! ⚠️"
 msgstr ""
 
 #: honeypot\honeypot.py:229
 msgid ""
-"An action will be immediately taken against you if you send a message in "
-"this channel."
+"Uma ação será imediatamente tomada contra você se você enviar uma mensagem neste "
+"canal."
 msgstr ""
 
 #: honeypot\honeypot.py:235
-msgid "What not to do?"
+msgid "O que não fazer?"
 msgstr ""
 
 #: honeypot\honeypot.py:236
-msgid "Do not send any messages in this channel."
+msgid "Não envie mensagens neste canal."
 msgstr ""
 
 #: honeypot\honeypot.py:240
-msgid "What WILL happen?"
+msgid "O que ACONTECERÁ?"
 msgstr ""
 
 #: honeypot\honeypot.py:241
-msgid "An action will be taken against you."
+msgid "Uma ação será tomada contra você."
 msgstr ""
 
 #: honeypot\honeypot.py:247
-msgid "## ⚠️ WARNING ⚠️"
+msgid "## ⚠️ AVISO ⚠️"
 msgstr ""
 
 #: honeypot\honeypot.py:253
 msgid ""
-"The honeypot channel has been set to {honeypot_channel.mention} ({honeypot_channel.id}). You can now start attracting self bots/scammers!\n"
-"Please make sure to enable the cog and set the logs channel, the action to take, the role to ping (and the mute role) if you haven't already."
+"O canal honeypot foi definido como {honeypot_channel.mention} ({honeypot_channel.id}). Você pode agora começar a atrair bots/escrotores!\n"
+"Por favor, certifique-se de habilitar o cog e definir o canal de logs, a ação a ser tomada, o papel a ser mencionado (e o papel de mutar) se você ainda não o fez."
 msgstr ""
