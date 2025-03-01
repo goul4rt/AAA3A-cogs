@@ -847,7 +847,7 @@ class TempRoles(Cog):
 
         # Verifica se o usuário já criou um cargo pessoal
         user_roles = await self.config.guild(ctx.guild).user_roles()
-        if str(ctx.author.id) in user_roles and len(user_roles[str(ctx.author.id)]) >= 2:
+        if str(ctx.author.id) in user_roles and len(user_roles[str(ctx.author.id)]) >= 1:
             raise commands.UserFeedbackCheckFailure(_("Você já criou dois cargos temporários."))
 
         # Cria o novo cargo
