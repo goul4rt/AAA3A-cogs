@@ -277,7 +277,7 @@ class TempRoles(Cog):
         pass
 
     @commands.admin_or_permissions(manage_roles=True)
-    @temproles.command(aliases=["add", "+"])
+    @temproles.command(aliases=["add", "+", "adicionar"])
     async def assign(
         self,
         ctx: commands.Context,
@@ -431,7 +431,7 @@ class TempRoles(Cog):
         )
 
     @commands.admin_or_permissions(manage_roles=True)
-    @temproles.command(aliases=["remove", "-"])
+    @temproles.command(aliases=["remove", "-", "remover", "remover-vip"])
     async def unassign(
         self, ctx: commands.Context, member: discord.Member, role: discord.Role
     ) -> None:
@@ -472,7 +472,7 @@ class TempRoles(Cog):
 
     @commands.admin_or_permissions(manage_roles=True)
     @commands.bot_has_permissions(embed_links=True)
-    @temproles.command()
+    @temproles.command(aliases=["listar"])
     async def list(
         self,
         ctx: commands.Context,
@@ -827,13 +827,14 @@ class TempRoles(Cog):
         await ctx.send(_("O ID do cargo permitido para criar cargos pessoais foi definido como {role.mention}.").format(role=role))
 
     @commands.admin_or_permissions(manage_roles=True)
-    @temproles.command()
+    @temproles.command(aliases=["criar"])
     async def createpersonalrole(
         self, ctx: commands.Context, role_name: str
     ) -> None:
-        """Criar um cargo pessoal que só você pode editar."""
+        """Criar um cargo pessoal que só você pode editar com a mesma duração do cargo da pessoa."""
         # Obtém o ID do cargo permitido da configuração
-        allowed_role_id = 1179928669708369970
+        allowed_role_id = 1176861125799854100
+        position_role_id = 1174124070414057512  # ID do cargo abaixo do qual o novo cargo deve ser criado
 
         if allowed_role_id is None:
             raise commands.UserFeedbackCheckFailure(
@@ -845,16 +846,37 @@ class TempRoles(Cog):
                 _("Você não tem permissão para criar um cargo pessoal.")
             )
 
+        # Verifica se o membro já possui um cargo pessoal
+        personal_roles = [role for role in ctx.author.roles if role.id == allowed_role_id]
+        if personal_roles:
+            raise commands.UserFeedbackCheckFailure(_("Você já possui um cargo pessoal."))
+
+        # Obtém a duração do cargo da pessoa
+        duration = None
+        for role in ctx.author.roles:
+            if role.id == allowed_role_id:
+                duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(role.id))
+                break
+
         # Cria o novo cargo
         guild = ctx.guild
         try:
             new_role = await guild.create_role(
-                name=f"{ctx.author.display_name}'s Role",  # Nome do cargo
+                name=f"{role_name}",  # Nome do cargo
                 permissions=discord.Permissions(send_messages=True),  # Defina as permissões conforme necessário
                 reason=f"Cargo pessoal criado por {ctx.author} ({ctx.author.id})"
             )
             await ctx.author.add_roles(new_role)
-            
+
+            # Define a posição do novo cargo abaixo do cargo especificado
+            position_role = guild.get_role(position_role_id)
+            if position_role:
+                await new_role.edit(position=position_role.position - 1)
+
+            # Define a duração do novo cargo igual à do cargo da pessoa
+            if duration:
+                await self.config.guild(ctx.guild).auto_temp_roles.set({str(new_role.id): duration})
+
             # Define as permissões do cargo para que apenas o membro possa editá-lo
             await new_role.edit(
                 permissions=discord.Permissions.none(),
@@ -866,3 +888,28 @@ class TempRoles(Cog):
         except discord.HTTPException as e:
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
+
+    @temproles.command(aliases=["adicionare"])
+    async def addmembertopersonalrole(
+        self, ctx: commands.Context, member: discord.Member
+    ) -> None:
+        """Adicionar um membro ao seu cargo pessoal."""
+        allowed_role_id = 1176861125799854100
+
+        if allowed_role_id not in [role.id for role in ctx.author.roles]:
+            raise commands.UserFeedbackCheckFailure(
+                _("Você não tem permissão para adicionar membros a este cargo.")
+            )
+
+        personal_roles = [role for role in ctx.author.roles if role.id == allowed_role_id]
+        if not personal_roles:
+            raise commands.UserFeedbackCheckFailure(_("Você não possui um cargo pessoal."))
+
+        # Adiciona o membro ao cargo pessoal
+        try:
+            personal_role = personal_roles[0]  # Assume que o membro só tem um cargo pessoal
+            await member.add_roles(personal_role)
+            await ctx.send(_("Membro {member.mention} adicionado ao seu cargo pessoal.").format(member=member))
+        except discord.HTTPException as e:
+            await ctx.send(_("Ocorreu um erro ao adicionar o membro ao cargo."))
+            self.logger.error(f"Erro ao adicionar membro ao cargo: {e}")
