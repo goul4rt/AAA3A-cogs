@@ -846,10 +846,15 @@ class TempRoles(Cog):
         await ctx.send(_("Caçando cargo pessoal..."))
         # Verifica se o membro já possui um cargo pessoal
         personal_roles = [role for role in ctx.author.roles if role.id == allowed_role_id]
+        await ctx.send(_("Cargo pessoal encontrado."))
+        # o cargo é?
         
         # Verifica se o usuário já possui um cargo pessoal
         if personal_roles:
             await ctx.send(_("Cargo pessoal encontrado."))
+            # enviar no cana qual o cargo encontrado 
+            await ctx.send(_("Cargo pessoal encontrado: {personal_roles[0].mention}.").format(personal_roles=personal_roles))
+            # pingar no cargo o cargo que ele já possui
             # Salva a relação do ID do usuário com o cargo criado
             user_personal_roles = await self.config.guild(ctx.guild).user_personal_roles()
             user_id = str(ctx.author.id)
