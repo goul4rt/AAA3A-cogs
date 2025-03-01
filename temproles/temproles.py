@@ -54,6 +54,8 @@ class TempRoles(Cog):
             allowed_self_temp_roles={},
             joining_temp_roles={},
             auto_temp_roles={},
+            user_roles={},
+            allowed_personal_role_id=None,
         )
 
     async def cog_load(self) -> None:
@@ -843,6 +845,11 @@ class TempRoles(Cog):
         if allowed_role_id not in [role.id for role in ctx.author.roles]:
             raise commands.UserFeedbackCheckFailure(_("Você não tem permissão para criar um cargo pessoal."))
 
+        # Verifica se o usuário já criou um cargo pessoal
+        user_roles = await self.config.guild(ctx.guild).user_roles()
+        if str(ctx.author.id) in user_roles and len(user_roles[str(ctx.author.id)]) >= 2:
+            raise commands.UserFeedbackCheckFailure(_("Você já criou dois cargos temporários."))
+
         # Cria o novo cargo
         guild = ctx.guild
         try:
@@ -853,6 +860,12 @@ class TempRoles(Cog):
             )
             await ctx.send(_("Cargo pessoal '{role_name}' criado com sucesso!").format(role_name=new_role.name))
             await ctx.author.add_roles(new_role)
+
+            # Salva a relação do usuário com o cargo criado
+            if str(ctx.author.id) not in user_roles:
+                user_roles[str(ctx.author.id)] = []
+            user_roles[str(ctx.author.id)].append(new_role.id)
+            await self.config.guild(ctx.guild).user_roles.set(user_roles)
 
             # Define a posição do novo cargo abaixo do cargo especificado
             position_role = guild.get_role(position_role_id)
@@ -866,9 +879,6 @@ class TempRoles(Cog):
                 reason="Permissões ajustadas para cargo pessoal."
             )
             await ctx.send(_("As permissões do cargo pessoal foram ajustadas com sucesso."))
-
-            # Armazena que o usuário criou um cargo personalizado
-            await self.config.guild(ctx.guild).personal_roles.set_raw(str(ctx.author.id), value=str(new_role.id))
         except discord.HTTPException as e:
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
