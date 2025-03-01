@@ -836,15 +836,13 @@ class TempRoles(Cog):
         allowed_role_id = 1176861125799854100
         position_role_id = 1174124070414057512  # ID do cargo abaixo do qual o novo cargo deve ser criado
 
+        # Verifica se o ID do cargo permitido está definido
         if allowed_role_id is None:
-            raise commands.UserFeedbackCheckFailure(
-                _("O ID do cargo permitido não foi definido. Use o comando `setpersonalroleid` para configurá-lo.")
-            )
+            raise commands.UserFeedbackCheckFailure(_("O ID do cargo permitido não foi definido. Use o comando `setpersonalroleid` para configurá-lo."))
 
+        # Verifica se o usuário tem a permissão para criar um cargo pessoal
         if allowed_role_id not in [role.id for role in ctx.author.roles]:
-            raise commands.UserFeedbackCheckFailure(
-                _("Você não tem permissão para criar um cargo pessoal.")
-            )
+            raise commands.UserFeedbackCheckFailure(_("Você não tem permissão para criar um cargo pessoal."))
 
         # Verifica se o membro já possui um cargo pessoal
         personal_roles = [role for role in ctx.author.roles if role.id == allowed_role_id]
@@ -852,11 +850,8 @@ class TempRoles(Cog):
             raise commands.UserFeedbackCheckFailure(_("Você já possui um cargo pessoal."))
 
         # Obtém a duração do cargo da pessoa
-        duration = None
-        for role in ctx.author.roles:
-            if role.id == allowed_role_id:
-                duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(role.id))
-                break
+        duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(allowed_role_id))
+        await ctx.send(_("Duração do cargo pessoal obtida com sucesso."))
 
         # Cria o novo cargo
         guild = ctx.guild
@@ -866,25 +861,26 @@ class TempRoles(Cog):
                 permissions=discord.Permissions(send_messages=True),  # Defina as permissões conforme necessário
                 reason=f"Cargo pessoal criado por {ctx.author} ({ctx.author.id})"
             )
+            await ctx.send(_("Cargo pessoal '{role_name}' criado com sucesso!").format(role_name=new_role.name))
             await ctx.author.add_roles(new_role)
 
             # Define a posição do novo cargo abaixo do cargo especificado
             position_role = guild.get_role(position_role_id)
             if position_role:
                 await new_role.edit(position=position_role.position - 1)
+                await ctx.send(_("A posição do cargo pessoal foi ajustada com sucesso."))
 
             # Define a duração do novo cargo igual à do cargo da pessoa
             if duration:
                 await self.config.guild(ctx.guild).auto_temp_roles.set({str(new_role.id): duration})
+                await ctx.send(_("A duração do cargo pessoal foi definida com sucesso."))
 
             # Define as permissões do cargo para que apenas o membro possa editá-lo
             await new_role.edit(
                 permissions=discord.Permissions.none(),
                 reason="Permissões ajustadas para cargo pessoal."
             )
-            await ctx.send(
-                _("Cargo pessoal '{role_name}' criado com sucesso!").format(role_name=new_role.name)
-            )
+            await ctx.send(_("As permissões do cargo pessoal foram ajustadas com sucesso."))
         except discord.HTTPException as e:
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
