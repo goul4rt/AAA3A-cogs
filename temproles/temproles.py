@@ -11,9 +11,9 @@ from copy import deepcopy
 
 from redbot.core.utils.chat_formatting import humanize_list, pagify
 
-# Credits:
-# General repo credits.
-# Thanks to Obi-Wan3 for the cog idea and the strings of some messages (https://github.com/Obi-Wan3/OB13-Cogs/tree/main/temprole)!
+# Créditos:
+# Créditos gerais do repositório.
+# Agradecimentos a Obi-Wan3 pela ideia do cog e pelas strings de algumas mensagens (https://github.com/Obi-Wan3/OB13-Cogs/tree/main/temprole)!
 
 _: Translator = Translator("TempRoles", __file__)
 
@@ -36,7 +36,7 @@ class OptionalDurationConverter(commands.Converter):
 
 @cog_i18n(_)
 class TempRoles(Cog):
-    """A cog to assign temporary roles to users, expiring after a set duration!"""
+    """Um cog para atribuir funções temporárias aos usuários, expirando após um determinado período!"""
 
     __authors__: typing.List[str] = ["AAA3A", "Obi-Wan3"]
 
@@ -61,7 +61,7 @@ class TempRoles(Cog):
         self.loops.append(
             Loop(
                 cog=self,
-                name="Check TempRoles",
+                name="Verificar TempRoles",
                 function=self.temp_roles_loop,
                 seconds=30,
             )
@@ -73,7 +73,7 @@ class TempRoles(Cog):
         requester: typing.Literal["discord_deleted_user", "owner", "user", "user_strict"],
         user_id: int,
     ) -> None:
-        """Delete temporary roles only in cog data for the user."""
+        """Excluir funções temporárias apenas nos dados do cog para o usuário."""
         if requester not in ("discord_deleted_user", "owner", "user", "user_strict"):
             return
         if requester not in ("discord_deleted_user", "owner"):
@@ -88,7 +88,7 @@ class TempRoles(Cog):
                     del members_data[guild]
 
     async def red_get_data_for_user(self, *, user_id: int) -> typing.Dict[str, io.BytesIO]:
-        """Get all data about the user."""
+        """Obter todos os dados sobre o usuário."""
         data = {
             Config.GLOBAL: {},
             Config.USER: {},
@@ -136,11 +136,11 @@ class TempRoles(Cog):
                             if (temp_role := guild.get_role(int(temp_role_id))) is not None:
                                 try:
                                     await member.remove_roles(
-                                        temp_role, reason="Temp Role automatically unassigned."
+                                        temp_role, reason="Função Temporária automaticamente desassociada."
                                     )
                                 except discord.HTTPException as e:
                                     self.logger.error(
-                                        f"Error when removing the Temp Role {temp_role.name} ({temp_role.id}) from {member} ({member.id}) in {guild.name} ({guild.id}).",
+                                        f"Erro ao remover a Função Temporária {temp_role.name} ({temp_role.id}) de {member} ({member.id}) em {guild.name} ({guild.id}).",
                                         exc_info=e,
                                     )
                                 else:
@@ -157,9 +157,9 @@ class TempRoles(Cog):
                                     ):
                                         await logs_channel.send(
                                             embed=discord.Embed(
-                                                title=_("Temp Roles"),
+                                                title=_("Funções Temporárias"),
                                                 description=_(
-                                                    "Temp Role {temp_role.mention} ({temp_role.id}) has been automatically unassigned from {member.mention} ({member.id})."
+                                                    "A Função Temporária {temp_role.mention} ({temp_role.id}) foi automaticamente desassociada de {member.mention} ({member.id})."
                                                 ).format(temp_role=temp_role, member=member),
                                                 color=await self.bot.get_embed_color(logs_channel),
                                             )
@@ -194,11 +194,11 @@ class TempRoles(Cog):
             try:
                 await member.add_roles(
                     role,
-                    reason=f"Joining Temp Role assigned to new member, expires in {duration_string}.",
+                    reason=f"Função Temporária atribuída ao novo membro, expira em {duration_string}.",
                 )
             except discord.HTTPException as e:
                 self.logger.error(
-                    f"Error when assigning the Joining Temp Role {role.name} ({role.id}) to {member} ({member.id}) in {member.guild.name} ({member.guild.id}).",
+                    f"Erro ao atribuir a Função Temporária de Entrada {role.name} ({role.id}) a {member} ({member.id}) em {member.guild.name} ({member.guild.id}).",
                     exc_info=e,
                 )
             else:
@@ -216,9 +216,9 @@ class TempRoles(Cog):
                 ):
                     await logs_channel.send(
                         embed=discord.Embed(
-                            title=_("Joining Temp Roles"),
+                            title=_("Funções Temporárias de Entrada"),
                             description=_(
-                                "Joining Temp Role {role.mention} ({role.id}) has been assigned to {member.mention} ({member.id}). Expires in {duration_string}."
+                                "A Função Temporária de Entrada {role.mention} ({role.id}) foi atribuída a {member.mention} ({member.id}). Expira em {duration_string}."
                             ).format(role=role, member=member, duration_string=duration_string),
                             color=await self.bot.get_embed_color(logs_channel),
                         )
@@ -261,9 +261,9 @@ class TempRoles(Cog):
                     ):
                         await logs_channel.send(
                             embed=discord.Embed(
-                                title=_("Auto Temp Roles"),
+                                title=_("Funções Temporárias Automáticas"),
                                 description=_(
-                                    "Auto Temp Role {role.mention} ({role.id}) has been assigned to {member.mention} ({member.id}). Expires in {duration_string}."
+                                    "A Função Temporária Automática {role.mention} ({role.id}) foi atribuída a {member.mention} ({member.id}). Expira em {duration_string}."
                                 ).format(role=role, member=after, duration_string=duration_string),
                                 color=await self.bot.get_embed_color(logs_channel),
                             )
@@ -273,7 +273,7 @@ class TempRoles(Cog):
     @commands.bot_has_permissions(manage_roles=True)
     @commands.hybrid_group(aliases=["temprole"])
     async def temproles(self, ctx: commands.Context) -> None:
-        """Assign TempRoles roles to users, expiring after a set time."""
+        """Atribuir funções temporárias aos usuários, expirando após um determinado tempo."""
         pass
 
     @commands.admin_or_permissions(manage_roles=True)
@@ -286,17 +286,17 @@ class TempRoles(Cog):
         *,
         duration: DurationConverter,
     ) -> None:
-        """Assign/Add a TempRole to a member, for a specified duration."""
+        """Atribuir/Adicionar uma Função Temporária a um membro, por um período especificado."""
         member_temp_roles = await self.config.member(member).temp_roles()
         if str(role.id) in member_temp_roles:
             # raise commands.UserFeedbackCheckFailure(
-            #     _("This role is already a TempRole of this member.")
+            #     _("Esta função já é uma Função Temporária deste membro.")
             # )
             if not ctx.assume_yes:
                 if not await CogsUtils.ConfirmationAsk(
                     ctx,
                     content=_(
-                        "This role is already a TempRole of this member. Do you want to edit the duration?\nCurrently, this Temp Role expires {timestamp}."
+                        "Esta função já é uma Função Temporária deste membro. Você deseja editar a duração?\nAtualmente, esta Função Temporária expira {timestamp}."
                     ).format(timestamp=f"<t:{int(member_temp_roles[str(role.id)])}:R>"),
                 ):
                     return await CogsUtils.delete_message(ctx.message)
@@ -305,17 +305,17 @@ class TempRoles(Cog):
                 )
         elif role in member.roles:
             raise commands.UserFeedbackCheckFailure(
-                _("This member already has {role.mention} ({role.id}).").format(role=role)
+                _("Este membro já possui {role.mention} ({role.id}).").format(role=role)
             )
         if not role.is_assignable():
-            raise commands.UserFeedbackCheckFailure(_("This role can't be assigned."))
+            raise commands.UserFeedbackCheckFailure(_("Esta função não pode ser atribuída."))
         if (
             ctx.command.name != "selfassign"
             and ctx.author != ctx.guild.owner
             and (member.top_role >= ctx.author.top_role or member == ctx.guild.owner)
         ):
             raise commands.UserFeedbackCheckFailure(
-                _("You can't assign this role to this member, due to the Discord role hierarchy.")
+                _("Você não pode atribuir esta função a este membro, devido à hierarquia de funções do Discord.")
             )
         try:
             end_time: datetime.datetime = (
@@ -323,14 +323,14 @@ class TempRoles(Cog):
             )
         except OverflowError:
             raise commands.UserFeedbackCheckFailure(
-                _("The time set is way too high, consider setting something reasonable.")
+                _("O tempo definido é muito alto, considere definir algo razoável.")
             )
         end_time = end_time.replace(second=0 if end_time.second < 30 else 30)
         duration_string = CogsUtils.get_interval_string(duration)
         await member.add_roles(
             role,
-            reason=("Self " if ctx.command.name == "selfassign" else "")
-            + f"Temp Role assigned by {ctx.author} ({ctx.author.id}), expires in {duration_string}.",
+            reason=("Auto " if ctx.command.name == "selfassign" else "")
+            + f"Função Temporária atribuída por {ctx.author} ({ctx.author.id}), expira em {duration_string}.",
         )
         member_temp_roles[str(role.id)] = int(end_time.replace(microsecond=0).timestamp())
         await self.config.member(member).temp_roles.set(member_temp_roles)
@@ -341,10 +341,10 @@ class TempRoles(Cog):
         ):
             await logs_channel.send(
                 embed=discord.Embed(
-                    title=_("Temp Roles"),
-                    description=(_("Self ") if ctx.command.name == "selfassign" else "")
+                    title=_("Funções Temporárias"),
+                    description=(_("Auto ") if ctx.command.name == "selfassign" else "")
                     + _(
-                        "Temp Role {role.mention} ({role.id}) has been assigned to {member.mention} ({member.id}) by {author.mention} ({author.id}). Expires in {duration_string}."
+                        "A Função Temporária {role.mention} ({role.id}) foi atribuída a {member.mention} ({member.id}) por {author.mention} ({author.id}). Expira em {duration_string}."
                     ).format(
                         role=role,
                         member=member,
@@ -355,9 +355,9 @@ class TempRoles(Cog):
                 )
             )
         await ctx.send(
-            (_("Self ") if ctx.command.name == "selfassign" else "")
+            (_("Auto ") if ctx.command.name == "selfassign" else "")
             + _(
-                "Temp Role {role.mention} ({role.id}) has been assigned to {member.mention} ({member.id}). Expires **in {duration_string}** ({timestamp})."
+                "A Função Temporária {role.mention} ({role.id}) foi atribuída a {member.mention} ({member.id}). Expira **em {duration_string}** ({timestamp})."
             ).format(
                 role=role,
                 member=member,
@@ -377,11 +377,11 @@ class TempRoles(Cog):
         *,
         duration: DurationConverter,
     ) -> None:
-        """Edit a TempRole for a member, for a specified duration."""
+        """Editar uma Função Temporária para um membro, por um período especificado."""
         member_temp_roles = await self.config.member(member).temp_roles()
         if str(role.id) not in member_temp_roles:
             raise commands.UserFeedbackCheckFailure(
-                _("This role isn't a TempRole of this member.")
+                _("Esta função não é uma Função Temporária deste membro.")
             )
         try:
             end_time: datetime.datetime = (
@@ -389,13 +389,13 @@ class TempRoles(Cog):
             )
         except OverflowError:
             raise commands.UserFeedbackCheckFailure(
-                _("The time set is way too high, consider setting something reasonable.")
+                _("O tempo definido é muito alto, considere definir algo razoável.")
             )
         end_time = end_time.replace(second=0 if end_time.second < 30 else 30)
         duration_string = CogsUtils.get_interval_string(duration)
         await member.add_roles(
             role,
-            reason="Temp Role edited by {ctx.author} ({ctx.author.id}), expires in {duration_string}.",
+            reason="Função Temporária editada por {ctx.author} ({ctx.author.id}), expira em {duration_string}.",
         )
         member_temp_roles[str(role.id)] = int(end_time.replace(microsecond=0).timestamp())
         await self.config.member(member).temp_roles.set(member_temp_roles)
@@ -406,9 +406,9 @@ class TempRoles(Cog):
         ):
             await logs_channel.send(
                 embed=discord.Embed(
-                    title=_("Temp Roles"),
+                    title=_("Funções Temporárias"),
                     description=_(
-                        "Temp Role {role.mention} ({role.id}) has been edited for {member.mention} ({member.id}) by {author.mention} ({author.id}). Expires in {duration_string}."
+                        "A Função Temporária {role.mention} ({role.id}) foi editada para {member.mention} ({member.id}) por {author.mention} ({author.id}). Expira em {duration_string}."
                     ).format(
                         role=role,
                         member=member,
@@ -420,7 +420,7 @@ class TempRoles(Cog):
             )
         await ctx.send(
             _(
-                "Temp Role {role.mention} ({role.id}) has been edited for {member.mention} ({member.id}). Expires **in {duration_string}** ({timestamp})."
+                "A Função Temporária {role.mention} ({role.id}) foi editada para {member.mention} ({member.id}). Expira **em {duration_string}** ({timestamp})."
             ).format(
                 role=role,
                 member=member,
@@ -435,15 +435,15 @@ class TempRoles(Cog):
     async def unassign(
         self, ctx: commands.Context, member: discord.Member, role: discord.Role
     ) -> None:
-        """Unassign/Remove a TempRole from a member."""
+        """Desatribuir/Remover uma Função Temporária de um membro."""
         member_temp_roles = await self.config.member(member).temp_roles()
         if str(role.id) not in member_temp_roles:
             raise commands.UserFeedbackCheckFailure(
-                _("This role isn't a temprole of this member.")
+                _("Esta função não é uma Função Temporária deste membro.")
             )
         try:
             await member.remove_roles(
-                role, reason=f"Temp Role unassigned by {ctx.author} ({ctx.author.id})."
+                role, reason=f"Função Temporária desatribuída por {ctx.author} ({ctx.author.id})."
             )
         except discord.HTTPException:
             pass
@@ -456,16 +456,16 @@ class TempRoles(Cog):
         ):
             await logs_channel.send(
                 embed=discord.Embed(
-                    title=_("Temp Roles"),
+                    title=_("Funções Temporárias"),
                     description=_(
-                        "TempRole {role.mention} ({role.id}) has been unassigned from {member.mention} ({member.id}) by {author.mention} ({author.id})."
+                        "A Função Temporária {role.mention} ({role.id}) foi desatribuída de {member.mention} ({member.id}) por {author.mention} ({author.id})."
                     ).format(role=role, member=member, author=ctx.author),
                     color=await ctx.bot.get_embed_color(logs_channel),
                 )
             )
         await ctx.send(
             _(
-                "Temp Role {role.mention} ({role.id}) has been unassigned from {member.mention} ({member.id})."
+                "A Função Temporária {role.mention} ({role.id}) foi desatribuída de {member.mention} ({member.id})."
             ).format(role=role, member=member),
             allowed_mentions=discord.AllowedMentions(roles=False, users=False),
         )
@@ -479,23 +479,23 @@ class TempRoles(Cog):
         member: typing.Optional[discord.Member] = None,
         role: typing.Optional[discord.Role] = None,
     ) -> None:
-        """List active Temp Roles on this server, for optional specified member and/or role."""
+        """Listar Funções Temporárias ativas neste servidor, para membro e/ou função especificados opcionalmente."""
         embed: discord.Embed = discord.Embed(
-            title=_("Temp Roles"),
+            title=_("Funções Temporárias"),
             color=await ctx.embed_color(),
         )
         embed.set_footer(text=ctx.guild.name, icon_url=ctx.guild.icon)
         if member is not None and role is not None:
             if str(role.id) in await self.config.member(member).temp_roles():
-                description = _("This member has this Temp Role.")
+                description = _("Este membro possui esta Função Temporária.")
             else:
-                description = _("This member hasn't this Temp Role.")
+                description = _("Este membro não possui esta Função Temporária.")
         elif member is not None:
             embed.set_author(
                 name=f"{member.display_name} ({member.id})", icon_url=member.display_avatar
             )
             if not (temp_roles := await self.config.member(member).temp_roles()):
-                description = _("This member hasn't any Temp Roles.")
+                description = _("Este membro não possui nenhuma Função Temporária.")
             else:
                 description = "\n".join(
                     [
@@ -515,7 +515,7 @@ class TempRoles(Cog):
                     continue
                 temp_roles_members[member] = data["temp_roles"][str(role.id)]
             if not temp_roles_members:
-                description = _("No members have this Temp Role.")
+                description = _("Nenhum membro possui esta Função Temporária.")
             else:
                 description = "\n".join(
                     [
@@ -540,7 +540,7 @@ class TempRoles(Cog):
             if description:
                 description = "\n".join(description)
             else:
-                description = _("No active Temp Roles on this server.")
+                description = _("Nenhuma Função Temporária ativa neste servidor.")
         embeds = []
         pages = list(pagify(description, page_length=3000))
         for page in pages:
@@ -552,7 +552,7 @@ class TempRoles(Cog):
     @commands.bot_has_permissions(embed_links=True)
     @temproles.command()
     async def mylist(self, ctx: commands.Context) -> None:
-        """List active Temp Roles for yourself."""
+        """Listar Funções Temporárias ativas para você mesmo."""
         await self.list.callback(self, ctx, member=ctx.author)
 
     @commands.admin_or_permissions(administrator=True)
@@ -560,17 +560,17 @@ class TempRoles(Cog):
     async def logschannel(
         self, ctx: commands.Context, logs_channel: discord.TextChannel = None
     ) -> None:
-        """Set the logs channel for Temp Roles."""
+        """Definir o canal de logs para Funções Temporárias."""
         if logs_channel is None:
             await self.config.guild(ctx.guild).logs_channel.clear()
-            await ctx.send(_("Logs channel unset."))
+            await ctx.send(_("Canal de logs desconfigurado."))
         else:
             if not logs_channel.permissions_for(ctx.me).embed_links:
                 raise commands.UserFeedbackCheckFailure(
-                    _("I need of the `embed_links` permission in the logs channel.")
+                    _("Eu preciso da permissão `embed_links` no canal de logs.")
                 )
             await self.config.guild(ctx.guild).logs_channel.set(logs_channel.id)
-            await ctx.send(_("Logs channel set."))
+            await ctx.send(_("Canal de logs configurado."))
 
     @commands.admin_or_permissions(administrator=True)
     @temproles.command()
@@ -581,55 +581,55 @@ class TempRoles(Cog):
         min_duration: typing.Optional[OptionalDurationConverter] = datetime.timedelta(days=1),
         max_duration: typing.Optional[OptionalDurationConverter] = datetime.timedelta(days=365),
     ) -> None:
-        """Add an allowed self Temp Role.
+        """Adicionar uma Função Temporária permitida para autoatribuição.
 
-        **Parameters:**
-        - `min_duration`: The minimum duration for the self temp role. `none` to disable. Defaults is 1 day.
-        - `max_duration`: The minimum duration for the self temp role. `none` to disable. Defaults is 365 days.
+        **Parâmetros:**
+        - `min_duration`: A duração mínima para a função temporária autoatribuída. `none` para desativar. O padrão é 1 dia.
+        - `max_duration`: A duração máxima para a função temporária autoatribuída. `none` para desativar. O padrão é 365 dias.
         """
         if role >= ctx.guild.me.top_role or (
             role >= ctx.author.top_role and ctx.author != ctx.guild.owner
         ):
             raise commands.UserFeedbackCheckFailure(
                 _(
-                    "The role {role.mention} ({role.id}) cannot be assigned due to the Discord role hierarchy."
+                    "A função {role.mention} ({role.id}) não pode ser atribuída devido à hierarquia de funções do Discord."
                 ).format(role=role)
             )
         allowed_self_temp_roles = await self.config.guild(ctx.guild).allowed_self_temp_roles()
         if str(role.id) in allowed_self_temp_roles:
             raise commands.UserFeedbackCheckFailure(
-                _("This role is already an allowed self temp role.")
+                _("Esta função já é uma função temporária autoatribuída permitida.")
             )
         allowed_self_temp_roles[str(role.id)] = {
             "min_time": None if min_duration is None else int(min_duration.total_seconds()),
             "max_time": None if max_duration is None else int(max_duration.total_seconds()),
         }
         await self.config.guild(ctx.guild).allowed_self_temp_roles.set(allowed_self_temp_roles)
-        await ctx.send(_("Allowed self Temp Role added."))
+        await ctx.send(_("Função Temporária autoatribuída permitida adicionada."))
 
     @commands.admin_or_permissions(administrator=True)
     @temproles.command()
     async def removeallowedselftemprole(self, ctx: commands.Context, role: discord.Role) -> None:
-        """Remove an allowed self Temp Role."""
+        """Remover uma Função Temporária permitida para autoatribuição."""
         allowed_self_temp_roles = await self.config.guild(ctx.guild).allowed_self_temp_roles()
         if str(role.id) not in allowed_self_temp_roles:
             raise commands.UserFeedbackCheckFailure(
-                _("This role isn't an allowed self temp role.")
+                _("Esta função não é uma função temporária autoatribuída permitida.")
             )
         del allowed_self_temp_roles[str(role.id)]
         await self.config.guild(ctx.guild).allowed_self_temp_roles.set(allowed_self_temp_roles)
-        await ctx.send(_("Allowed self Temp Role removed."))
+        await ctx.send(_("Função Temporária autoatribuída permitida removida."))
 
     @temproles.command(aliases=["selfadd"])
     async def selfassign(
         self, ctx: commands.Context, role: discord.Role, *, duration: DurationConverter
     ) -> None:
-        """Assign/Add an allowed self Temp Role to yourself, for a specified duration."""
+        """Atribuir/Adicionar uma Função Temporária permitida para autoatribuição a você mesmo, por um período especificado."""
         if str(role.id) not in (
             allowed_self_temp_roles := await self.config.guild(ctx.guild).allowed_self_temp_roles()
         ):
             raise commands.UserFeedbackCheckFailure(
-                _("This role isn't an allowed self Temp Role on this server.")
+                _("Esta função não é uma Função Temporária permitida para autoatribuição neste servidor.")
             )
         if allowed_self_temp_roles[str(role.id)]["min_time"] is not None:
             min_duration = datetime.timedelta(
@@ -638,7 +638,7 @@ class TempRoles(Cog):
             if duration < min_duration:
                 raise commands.UserFeedbackCheckFailure(
                     _(
-                        "The duration for this role must be greater than {min_duration_string}."
+                        "A duração para esta função deve ser maior que {min_duration_string}."
                     ).format(min_duration_string=CogsUtils.get_interval_string(min_duration))
                 )
         if allowed_self_temp_roles[str(role.id)]["max_time"] is not None:
@@ -648,21 +648,21 @@ class TempRoles(Cog):
             if duration > max_duration:
                 raise commands.UserFeedbackCheckFailure(
                     _(
-                        "The duration for this role must be less than {max_duration_string}."
+                        "A duração para esta função deve ser menor que {max_duration_string}."
                     ).format(max_duration_string=CogsUtils.get_interval_string(max_duration))
                 )
         await self.assign.callback(self, ctx, member=ctx.author, role=role, duration=duration)
 
     @temproles.command(aliases=["selfremove"])
     async def selfunassign(self, ctx: commands.Context, role: discord.Role) -> None:
-        """Unassign/Remove an allowed self Temp Role from yourself."""
+        """Desatribuir/Remover uma Função Temporária permitida para autoatribuição de você mesmo."""
         if str(role.id) not in await self.config.guild(ctx.guild).allowed_self_temp_roles():
-            raise commands.UserFeedbackCheckFailure(_("You can't remove this role from yourself."))
+            raise commands.UserFeedbackCheckFailure(_("Você não pode remover esta função de si mesmo."))
         await self.unassign.callback(self, ctx, member=ctx.author, role=role)
 
     @temproles.command()
     async def selflist(self, ctx: commands.Context) -> None:
-        """Unassign/Remove an allowed self Temp Role from yourself."""
+        """Listar Funções Temporárias permitidas para autoatribuição de você mesmo."""
         description = ""
         BREAK_LINE = "\n"
         if member_temp_roles := {
@@ -672,7 +672,7 @@ class TempRoles(Cog):
             ).items()
             if (temp_role := ctx.guild.get_role(int(temp_role_id))) is not None
         }:
-            description += f"**Your current Temp Roles:**\n{BREAK_LINE.join([f'**•** {temp_role.mention} ({temp_role.id}) - Expires <t:{int(end_time)}:R>.' for temp_role, end_time in member_temp_roles.items()])}\n\n"
+            description += f"**Suas Funções Temporárias atuais:**\n{BREAK_LINE.join([f'**•** {temp_role.mention} ({temp_role.id}) - Expira <t:{int(end_time)}:R>.' for temp_role, end_time in member_temp_roles.items()])}\n\n"
         if allowed_self_temp_roles := {
             role: (data["min_time"], data["max_time"])
             for role_id, data in (
@@ -680,12 +680,12 @@ class TempRoles(Cog):
             ).items()
             if (role := ctx.guild.get_role(int(role_id))) is not None
         }:
-            description += f"**Allowed self Temp Roles on this server:**\n{BREAK_LINE.join([f'**•** {role.mention} ({role.id}) - Min duration `{CogsUtils.get_interval_string(min_duration) if min_duration is not None else None}`. - Max duration `{CogsUtils.get_interval_string(max_duration) if max_duration is not None else None}`.' for role, (min_duration, max_duration) in allowed_self_temp_roles.items()])}"
+            description += f"**Funções Temporárias permitidas para autoatribuição neste servidor:**\n{BREAK_LINE.join([f'**•** {role.mention} ({role.id}) - Duração mínima `{CogsUtils.get_interval_string(min_duration) if min_duration is not None else None}`. - Duração máxima `{CogsUtils.get_interval_string(max_duration) if max_duration is not None else None}`.' for role, (min_duration, max_duration) in allowed_self_temp_roles.items()])}"
         embeds = []
         pages = list(pagify(description, page_length=3000))
         for page in pages:
             embed: discord.Embed = discord.Embed(
-                title=_("Self Temp Roles"), color=await ctx.embed_color()
+                title=_("Funções Temporárias Autoatribuídas"), color=await ctx.embed_color()
             )
             embed.description = page
             embeds.append(embed)
@@ -699,43 +699,43 @@ class TempRoles(Cog):
         role: discord.Role,
         duration: DurationConverter,
     ) -> None:
-        """Add a joining Temp Role.
+        """Adicionar uma Função Temporária de Entrada.
 
-        **Parameters:**
-        - `role`: The role to assign to new members.
-        - `duration`: The duration of the role.
+        **Parâmetros:**
+        - `role`: A função a ser atribuída a novos membros.
+        - `duration`: A duração da função.
         """
         if role >= ctx.guild.me.top_role or (
             role >= ctx.author.top_role and ctx.author != ctx.guild.owner
         ):
             raise commands.UserFeedbackCheckFailure(
                 _(
-                    "The role {role.mention} ({role.id}) cannot be assigned due to the Discord role hierarchy."
+                    "A função {role.mention} ({role.id}) não pode ser atribuída devido à hierarquia de funções do Discord."
                 ).format(role=role)
             )
         joining_temp_roles = await self.config.guild(ctx.guild).joining_temp_roles()
         if str(role.id) in joining_temp_roles:
-            raise commands.UserFeedbackCheckFailure(_("This role is already a joining Temp Role."))
+            raise commands.UserFeedbackCheckFailure(_("Esta função já é uma Função Temporária de Entrada."))
         joining_temp_roles[str(role.id)] = int(duration.total_seconds())
         await self.config.guild(ctx.guild).joining_temp_roles.set(joining_temp_roles)
 
     @commands.admin_or_permissions(manage_roles=True)
     @temproles.command()
     async def removejoiningtemprole(self, ctx: commands.Context, role: discord.Role) -> None:
-        """Remove a joining Temp Role."""
+        """Remover uma Função Temporária de Entrada."""
         joining_temp_roles = await self.config.guild(ctx.guild).joining_temp_roles()
         if str(role.id) not in joining_temp_roles:
-            raise commands.UserFeedbackCheckFailure(_("This role isn't a joining Temp Role."))
+            raise commands.UserFeedbackCheckFailure(_("Esta função não é uma Função Temporária de Entrada."))
         del joining_temp_roles[str(role.id)]
         await self.config.guild(ctx.guild).joining_temp_roles.set(joining_temp_roles)
 
     @commands.admin_or_permissions(manage_roles=True)
     @temproles.command()
     async def joiningtemproles(self, ctx: commands.Context) -> None:
-        """List the joining Temp Roles."""
+        """Listar as Funções Temporárias de Entrada."""
         joining_temp_roles = await self.config.guild(ctx.guild).joining_temp_roles()
         if not joining_temp_roles:
-            await ctx.send(_("No joining Temp Roles."))
+            await ctx.send(_("Nenhuma Função Temporária de Entrada."))
             return
         description = "\n".join(
             [
@@ -748,7 +748,7 @@ class TempRoles(Cog):
         pages = list(pagify(description, page_length=3000))
         for page in pages:
             embed: discord.Embed = discord.Embed(
-                title=_("Joining Temp Roles"), color=await ctx.embed_color()
+                title=_("Funções Temporárias de Entrada"), color=await ctx.embed_color()
             )
             embed.description = page
             embeds.append(embed)
@@ -762,43 +762,43 @@ class TempRoles(Cog):
         role: discord.Role,
         duration: DurationConverter,
     ) -> None:
-        """Add an auto Temp Role.
+        """Adicionar uma Função Temporária Automática.
 
-        **Parameters:**
-        - `role`: The role to assign to new members.
-        - `duration`: The duration of the role.
+        **Parâmetros:**
+        - `role`: A função a ser atribuída a novos membros.
+        - `duration`: A duração da função.
         """
         if role >= ctx.guild.me.top_role or (
             role >= ctx.author.top_role and ctx.author != ctx.guild.owner
         ):
             raise commands.UserFeedbackCheckFailure(
                 _(
-                    "The role {role.mention} ({role.id}) cannot be assigned due to the Discord role hierarchy."
+                    "A função {role.mention} ({role.id}) não pode ser atribuída devido à hierarquia de funções do Discord."
                 ).format(role=role)
             )
         auto_temp_roles = await self.config.guild(ctx.guild).auto_temp_roles()
         if str(role.id) in auto_temp_roles:
-            raise commands.UserFeedbackCheckFailure(_("This role is already an auto Temp Role."))
+            raise commands.UserFeedbackCheckFailure(_("Esta função já é uma Função Temporária Automática."))
         auto_temp_roles[str(role.id)] = int(duration.total_seconds())
         await self.config.guild(ctx.guild).auto_temp_roles.set(auto_temp_roles)
 
     @commands.admin_or_permissions(manage_roles=True)
     @temproles.command()
     async def removeautoaddtemprole(self, ctx: commands.Context, role: discord.Role) -> None:
-        """Remove an auto Temp Role."""
+        """Remover uma Função Temporária Automática."""
         auto_temp_roles = await self.config.guild(ctx.guild).auto_temp_roles()
         if str(role.id) not in auto_temp_roles:
-            raise commands.UserFeedbackCheckFailure(_("This role isn't an auto Temp Role."))
+            raise commands.UserFeedbackCheckFailure(_("Esta função não é uma Função Temporária Automática."))
         del auto_temp_roles[str(role.id)]
         await self.config.guild(ctx.guild).auto_temp_roles.set(auto_temp_roles)
 
     @commands.admin_or_permissions(manage_roles=True)
     @temproles.command()
     async def autotemproles(self, ctx: commands.Context) -> None:
-        """List the auto Temp Roles."""
+        """Listar as Funções Temporárias Automáticas."""
         auto_temp_roles = await self.config.guild(ctx.guild).auto_temp_roles()
         if not auto_temp_roles:
-            await ctx.send(_("No auto Temp Roles."))
+            await ctx.send(_("Nenhuma Função Temporária Automática."))
             return
         description = "\n".join(
             [
@@ -811,8 +811,58 @@ class TempRoles(Cog):
         pages = list(pagify(description, page_length=3000))
         for page in pages:
             embed: discord.Embed = discord.Embed(
-                title=_("Auto Temp Roles"), color=await ctx.embed_color()
+                title=_("Funções Temporárias Automáticas"), color=await ctx.embed_color()
             )
             embed.description = page
             embeds.append(embed)
         await Menu(pages=embeds).start(ctx)
+
+    @commands.admin_or_permissions(manage_roles=True)
+    @temproles.command()
+    async def setpersonalroleid(
+        self, ctx: commands.Context, role: discord.Role
+    ) -> None:
+        """Definir o cargo que pode criar cargos pessoais."""
+        await self.config.guild(ctx.guild).allowed_personal_role_id.set(role.id)
+        await ctx.send(_("O ID do cargo permitido para criar cargos pessoais foi definido como {role.mention}.").format(role=role))
+
+    @commands.admin_or_permissions(manage_roles=True)
+    @temproles.command()
+    async def createpersonalrole(
+        self, ctx: commands.Context, role_name: str
+    ) -> None:
+        """Criar um cargo pessoal que só você pode editar."""
+        # Obtém o ID do cargo permitido da configuração
+        allowed_role_id = await self.config.guild(ctx.guild).allowed_personal_role_id()
+
+        if allowed_role_id is None:
+            raise commands.UserFeedbackCheckFailure(
+                _("O ID do cargo permitido não foi definido. Use o comando `setpersonalroleid` para configurá-lo.")
+            )
+
+        if allowed_role_id not in [role.id for role in ctx.author.roles]:
+            raise commands.UserFeedbackCheckFailure(
+                _("Você não tem permissão para criar um cargo pessoal.")
+            )
+
+        # Cria o novo cargo
+        guild = ctx.guild
+        try:
+            new_role = await guild.create_role(
+                name=f"{ctx.author.display_name}'s Role",  # Nome do cargo
+                permissions=discord.Permissions(send_messages=True),  # Defina as permissões conforme necessário
+                reason=f"Cargo pessoal criado por {ctx.author} ({ctx.author.id})"
+            )
+            await ctx.author.add_roles(new_role)
+            
+            # Define as permissões do cargo para que apenas o membro possa editá-lo
+            await new_role.edit(
+                permissions=discord.Permissions.none(),
+                reason="Permissões ajustadas para cargo pessoal."
+            )
+            await ctx.send(
+                _("Cargo pessoal '{role_name}' criado com sucesso!").format(role_name=new_role.name)
+            )
+        except discord.HTTPException as e:
+            await ctx.send(_("Ocorreu um erro ao criar o cargo."))
+            self.logger.error(f"Erro ao criar cargo: {e}")
