@@ -826,7 +826,6 @@ class TempRoles(Cog):
         await self.config.guild(ctx.guild).allowed_personal_role_id.set(role.id)
         await ctx.send(_("O ID do cargo permitido para criar cargos pessoais foi definido como {role.mention}.").format(role=role))
 
-    @commands.admin_or_permissions(manage_roles=True)
     @temproles.command(aliases=["criar"])
     async def createpersonalrole(
         self, ctx: commands.Context, role_name: str
@@ -836,16 +835,29 @@ class TempRoles(Cog):
         allowed_role_id = 1176861125799854100
         position_role_id = 1174124070414057512  # ID do cargo abaixo do qual o novo cargo deve ser criado
 
+        # Verifica se o ID do cargo permitido está definido
+        if allowed_role_id is None:
+            raise commands.UserFeedbackCheckFailure(_("O ID do cargo permitido não foi definido. Use o comando `setpersonalroleid` para configurá-lo."))
+
+        # Verifica se o usuário tem a permissão para criar um cargo pessoal
+        if allowed_role_id not in [role.id for role in ctx.author.roles]:
+            raise commands.UserFeedbackCheckFailure(_("Você não tem permissão para criar um cargo pessoal."))
+
+        await ctx.send(_("Caçando cargo pessoal..."))
+        # Verifica se o membro já possui um cargo pessoal
+        personal_roles = [role for role in ctx.author.roles if role.id == allowed_role_id]
+        await ctx.send(_("Cargo pessoal encontrado."))
+        
+        if personal_roles:
+            raise commands.UserFeedbackCheckFailure(_("Você já possui um cargo pessoal."))
+
         # Obtém a duração do cargo da pessoa
-        await ctx.send(_("Obtendo duração do cargo pessoal..."))
         duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(allowed_role_id))
         await ctx.send(_("Duração do cargo pessoal obtida com sucesso."))
 
         # Cria o novo cargo
         guild = ctx.guild
-        await ctx.send(_("Criando cargo pessoal..."))
         try:
-            await ctx.send(_("Cargo pessoal criado com sucesso!"))
             new_role = await guild.create_role(
                 name=f"{role_name}",  # Nome do cargo
                 permissions=discord.Permissions(send_messages=True),  # Defina as permissões conforme necessário
