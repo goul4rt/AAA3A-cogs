@@ -836,14 +836,6 @@ class TempRoles(Cog):
         allowed_role_id = 1176861125799854100
         position_role_id = 1174124070414057512  # ID do cargo abaixo do qual o novo cargo deve ser criado
 
-        # Verifica se o ID do cargo permitido está definido
-        if allowed_role_id is None:
-            raise commands.UserFeedbackCheckFailure(_("O ID do cargo permitido não foi definido. Use o comando `setpersonalroleid` para configurá-lo."))
-
-        # Verifica se o usuário tem a permissão para criar um cargo pessoal
-        if allowed_role_id not in [role.id for role in ctx.author.roles]:
-            raise commands.UserFeedbackCheckFailure(_("Você não tem permissão para criar um cargo pessoal."))
-
         # Obtém a duração do cargo da pessoa
         await ctx.send(_("Obtendo duração do cargo pessoal..."))
         duration = await self.config.guild(ctx.guild).auto_temp_roles.get(str(allowed_role_id))
