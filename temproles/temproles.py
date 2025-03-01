@@ -891,7 +891,7 @@ class TempRoles(Cog):
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
 
-    @temproles.command(aliases=["adicionare"])
+    @temproles.command(aliases=["adicionar-membro"])
     async def addmembertopersonalrole(
         self, ctx: commands.Context, member: discord.Member
     ) -> None:
