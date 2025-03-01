@@ -852,6 +852,10 @@ class TempRoles(Cog):
 
         # Cria o novo cargo
         guild = ctx.guild
+        allowed_role = guild.get_role(allowed_role_id)
+        if allowed_role is None:
+            raise commands.UserFeedbackCheckFailure(_("O cargo permitido não foi encontrado."))
+
         try:
             new_role = await guild.create_role(
                 name=f"{role_name}",  # Nome do cargo
@@ -879,6 +883,15 @@ class TempRoles(Cog):
                 reason="Permissões ajustadas para cargo pessoal."
             )
             await ctx.send(_("As permissões do cargo pessoal foram ajustadas com sucesso."))
+
+            # Edita a duração do cargo com a função edit
+            duration = await self.config.guild(ctx.guild).auto_temp_roles().get(str(allowed_role_id), None)
+            await ctx.send(f"Duração: {duration}")
+            if duration is not None:
+                await ctx.send(f"Duração: {duration}")
+                await self.edit.callback(self, ctx, member=ctx.author, role=new_role, duration=datetime.timedelta(seconds=duration))
+                await ctx.send(_("A duração do cargo pessoal foi ajustada com sucesso."))
+                
         except discord.HTTPException as e:
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
