@@ -847,7 +847,7 @@ class TempRoles(Cog):
 
         # Verifica se o usuário já criou um cargo pessoal
         user_roles = await self.config.guild(ctx.guild).user_roles()
-        if str(ctx.author.id) in user_roles and len(user_roles[str(ctx.author.id)]) >= 1:
+        if str(ctx.author.id) in user_roles and len(user_roles[str(ctx.author.id)]) >= 2:
             raise commands.UserFeedbackCheckFailure(_("Você já utilizou este comando."))
 
         # Cria o novo cargo
@@ -890,6 +890,24 @@ class TempRoles(Cog):
         except discord.HTTPException as e:
             await ctx.send(_("Ocorreu um erro ao criar o cargo."))
             self.logger.error(f"Erro ao criar cargo: {e}")
+
+    @temproles.command(aliases=["descriar"])
+    async def deletepersonalrole(
+        self, ctx: commands.Context, role: discord.Role
+    ) -> None:
+        """Excluir um cargo pessoal e remover o vínculo do usuário com ele."""
+        user_roles = await self.config.guild(ctx.guild).user_roles()
+        if str(ctx.author.id) not in user_roles or role.id not in user_roles[str(ctx.author.id)]:
+            raise commands.UserFeedbackCheckFailure(_("Você não possui este cargo pessoal."))
+
+        try:
+            await role.delete(reason=f"Cargo pessoal excluído por {ctx.author} ({ctx.author.id})")
+            user_roles[str(ctx.author.id)].remove(role.id)
+            await self.config.guild(ctx.guild).user_roles.set(user_roles)
+            await ctx.send(_("Cargo pessoal '{role_name}' excluído com sucesso!").format(role_name=role.name))
+        except discord.HTTPException as e:
+            await ctx.send(_("Ocorreu um erro ao excluir o cargo."))
+            self.logger.error(f"Erro ao excluir cargo: {e}")
 
     @temproles.command(aliases=["adicionar-membro"])
     async def addmembertopersonalrole(
